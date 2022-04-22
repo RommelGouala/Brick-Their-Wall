@@ -9,6 +9,7 @@ canvas.style.border = "1px solid black"
 const paddle_width = 100
 const paddle_Margin_Bottom = 50
 const paddle_Height = 20
+const ballRadius = 8
 let rightArrowBtn = false
 let leftArrowBtn = false
 
@@ -27,6 +28,23 @@ const paddle = {
     deltaX: 5
 
 }
+
+// Create the ball and Draw
+const theBall = {
+ x: canvas.width/2,
+ y: paddle.y - ballRadius,
+ radius: ballRadius,
+ speed: 4,
+ deltaX: 3,
+ deltaY: -3
+}
+ function ballDraw (){
+     ctx.beginPath()
+     ctx.arc(theBall.x, theBall.y, theBall.radius, 0, Math.PI*2)
+     ctx.fillStyle = 'red'
+     ctx.closePath()
+ }
+
 
 /* Draw Paddle by creating a function that can draw the Paddle ;
 
@@ -61,7 +79,7 @@ leftArrowBtn = true
 
 document.addEventListener('keyup', e =>{
     if (e.key === 'Arrowleft'){
-leftArrowBtn = false
+        leftArrowBtn = false
     } else if (e.key === 'ArrowRight'){
         rightArrowBtn = false
     }
@@ -72,6 +90,7 @@ leftArrowBtn = false
 // Create function draws, it will draw everthing. 
 function draws (){
     drawingPaddle()
+    ballDraw()
     
 }
 
@@ -84,7 +103,8 @@ paddleMove()
 // Create the game Loop by creating a function. Inisde that function I will put three function ( draw(), updateG (), )
 
 function loopFunc (){
-    ctx.drawImage(backgroundImg, 0, 0)
+    ctx.drawImage(backImg, 0, 0)
+    
     draws()
     updateGame()
     requestAnimationFrame(loopFunc)
