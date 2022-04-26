@@ -2,6 +2,8 @@
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 canvas.style.border = "1px solid black"
+
+
 // ctx.fillStyle = 'red';
 // ctx.fillRect(20, 20, 250, 100)
 
@@ -10,12 +12,20 @@ const paddle_width = 100
 const paddle_Margin_Bottom = 50
 const paddle_Height = 20
 const ballRadius = 8
+const textForBoard = {
+scoreT: "Score", 
+lifeT: "Life", 
+gateT: "Gate"
+}
+let brick = []
 let rightArrowBtn = false
 let leftArrowBtn = false
 let lifeScores = 3 // player life
-let scores = 0; // player's score
-let scoresUnit = 10;
-
+let scores = 0 // player's score
+let levelGate = 1
+let maxGate = 8
+let gameOVer = false
+let scoresUnit = 1
 /* Create the Paddle Object () that takes: x, y, width, height, deltaX ;
 The x will contain canvas.width divide by 2 and minus the paddle width ;
 The y will contain canvas.height minus paddle margin bottom and minus paddle height ;
@@ -34,26 +44,26 @@ const paddle = {
 
 // Create the ball and Draw
 const theBall = {
- x: canvas.width/2,
- y: paddle.y - ballRadius,
- radius: ballRadius,
- speed: 4,
+x: canvas.width/2,
+y: paddle.y - ballRadius,
+radius: ballRadius,
+speed: 4,
  deltaX: 3 * (Math.random() * 2 - 1),
- deltaY: -3
+deltaY: -3
 }
- function ballDraw (){
+function ballDraw (){
     ctx.beginPath()
     ctx.arc(theBall.x, theBall.y, theBall.radius, 0, Math.PI*2)
     ctx.fillStyle = "red"
     ctx.fill()
     ctx.closePath()
- }
+}
 
  // Move the Ball by creating a function:
 
  function ballMove(){
-     theBall.x += theBall.deltaX
-     theBall.y += theBall.deltaY
+    theBall.x += theBall.deltaX
+    theBall.y += theBall.deltaY
  } 
 
 // create a function for the Ball Collision to the wall
@@ -72,10 +82,10 @@ function ballCollision (){
 }
 // Function that reset the ball when the ball goes behind the paddle.
 function ballReset (){
-   theBall.x = canvas.width/2
-   theBall.y = paddle.y - ballRadius
+theBall.x = canvas.width/2
+theBall.y = paddle.y - ballRadius
    theBall.deltaX = 3 * (Math.random() * 2 - 1)
-   theBall.deltaY = -3
+theBall.deltaY = -3
 }
 
 // Function that take care of the ball collision with the paddle
@@ -83,7 +93,7 @@ function ballReset (){
 function ballCollisionToPaddle(){
     if (theBall.x < paddle.x + paddle.width && theBall.x > paddle.x && paddle.y < paddle.y + paddle.height && theBall.y > paddle.y){
        // Create a variable to check the collision point where the ball hit the paddle. And normalize the values.
-       let collisionPoint = theBall.x - (paddle.x + paddle.width/2)
+    let collisionPoint = theBall.x - (paddle.x + paddle.width/2)
         collisionPoint = collisionPoint / (paddle.width/2)
        //  create a variable to calculate the Angle of the ball
         let angleBall = collisionPoint * Math.PI/3
@@ -114,6 +124,7 @@ function paddleMove (){
 
 }
 
+// An event that for the user keypress: Left arrow or Right arrow
 document.addEventListener('keydown', e =>{
     if (e.key === 'ArrowLeft'){
 leftArrowBtn = true
@@ -125,7 +136,7 @@ leftArrowBtn = true
 })
 
 document.addEventListener('keyup', e =>{
-    if (e.key === 'Arrowleft'){
+    if (e.key === 'ArrowLeft'){
         leftArrowBtn = false
     } else if (e.key === 'ArrowRight'){
         rightArrowBtn = false
@@ -136,8 +147,8 @@ document.addEventListener('keyup', e =>{
 
 // Now I will create the Bricks.
 const bricks = {
-    row : 3,
-    column : 5,
+    row : 1,
+    column : 10,
     width : 55,
     height : 20,
     offSetLeft : 20,
@@ -146,13 +157,13 @@ const bricks = {
     fillColor : 'gray',
     colorStroke : "purple"
 }
-let brick = []
+
 // r = rows and c = column for the bricks
 function bricksCreation(){
     for (let r =0; r < bricks.row; r++ ){
-        bricks[r] = []
+        brick[r] = []
         for(let c = 0; c < bricks.column; c++){
-            bricks[r][c] = {
+            brick[r][c] = {
                 x : c * (bricks.offSetLeft + bricks.width) + bricks.offSetLeft,
                 y : r * (bricks.offSetTop + bricks.height) + bricks.offSetTop + bricks.marginTop,
                 status : true
@@ -165,7 +176,7 @@ bricksCreation()
 function drawBricks(){
     for (let r =0; r < bricks.row; r++ ){
         for(let c = 0; c < bricks.column; c++){
-            let bR = bricks[r][c]
+            let bR = brick[r][c]
             // this check for broken bricks. if the brick is broken
             if(bR.status){
                 ctx.fillStyle = bricks.fillColor
@@ -184,7 +195,7 @@ function drawBricks(){
 function ballToBrickCollision (){
     for (let r =0; r < bricks.row; r++ ){
         for(let c = 0; c < bricks.column; c++){
-            let bR = bricks[r][c]
+            let bR = brick[r][c]
             // this check for broken bricks. if the brick is broken
             if(bR.status){
             if(theBall.x + theBall.radius > bR.x && theBall.x - theBall.radius < bR.x + bricks.width && theBall.y + theBall.radius > bR.y && theBall.y - theBall.radius < bR.y + bricks.height){
@@ -197,35 +208,78 @@ function ballToBrickCollision (){
         }
 }
 
+// Create a game stats by using a function
+function gameStats(text, textX, textY){
+    ctx.fillStyle = 'white'
+    ctx.font = "bold 15px serif"
+    ctx.fillText(text, textX, textY)
+}
+
+// Create a function for the Gate 
+
+function gatesOpen(){
+    let isGatesOpened = true
+
+    for (let r =0; r < bricks.row; r++ ){
+        for(let c = 0; c < bricks.column; c++){
+            isGatesOpened = isGatesOpened && !brick[r][c].status
+            }
+        }
+if (isGatesOpened){
+    if (levelGate >= maxGate){
+        gameOVer = true
+        return
+    }
+    bricks.row++
+    bricksCreation()
+    theBall.speed += 0.8
+    ballReset()
+    levelGate++
+}
+}
+// Create a game over function>
+
+function gameOverr (){
+    if (lifeScores <= 0){
+        gameOVer = true
+    }
+}
 // Create function draws, it will draw everthing. 
 function draws (){
     drawingPaddle()
     ballDraw()
     drawBricks()
+    gameStats(lifeScores, canvas.width/2, 25)
+    gameStats(textForBoard.lifeT, (canvas.width/2) -30, 25)
+    gameStats(levelGate, canvas.width - 25, 25)
+    gameStats(textForBoard.gateT, (canvas.width -25) -50, 25)
+    gameStats(scores, 85, 25)
+    gameStats(textForBoard.scoreT, 35, 25)
+
+    
 }
 
 // updateGame function is where I will put the game logic 
 
 function updateGame(){
 paddleMove()
-
 ballMove()
-
 ballCollision()
-
 ballCollisionToPaddle()
-
-ballToBrickCollision ()
+ballToBrickCollision()
+gameOverr()
+gatesOpen()
 }
 
 // Create the game Loop by creating a function. Inisde that function I will put three function ( draw(), updateG (), )
 
 function loopFunc (){
     ctx.drawImage(backImg, 0, 0)
-    
     draws()
     updateGame()
+    if(!gameOVer){
     requestAnimationFrame(loopFunc)
+    }
 }
 loopFunc()
 
