@@ -69,7 +69,7 @@ function ballDraw (){
 // create a function for the Ball Collision to the wall
 
 function ballCollision (){
-    if(theBall.x + theBall.radius > canvas.width || theBall.x - theBall.radius < 0){
+    if(theBall.x + theBall.radius > canvas.width && theBall.x - theBall.radius < 0){
         theBall.deltaX = - theBall.deltaX
     }
     if(theBall.y - theBall.radius < 0){
@@ -242,6 +242,7 @@ if (isGatesOpened){
 function gameOverr (){
     if (lifeScores <= 0){
         gameOVer = true
+        backGroundMusic.paused()
     }
 }
 // Create function draws, it will draw everthing. 
@@ -277,6 +278,7 @@ function loopFunc (){
     ctx.drawImage(backImg, 0, 0)
     draws()
     updateGame()
+    backGroundMusic.play()
     if(!gameOVer){
     requestAnimationFrame(loopFunc)
     }
