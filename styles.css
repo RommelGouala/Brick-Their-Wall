@@ -1,3 +1,11 @@
+/* select the body */
+body{
+    background-color: gray;
+}
+
+main h2, main p{
+    padding-left: 1em;
+}
 /* selec section using ID */
 #sectOne{
     background-color: gray;
@@ -71,8 +79,4 @@ nav li{
 
 canvas{
     margin-left: 1em;
-}
-
-body{
-    background-color: gray;
 }
