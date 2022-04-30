@@ -1,4 +1,4 @@
-
+/* selec section using ID */
 #sectOne{
     background-color: gray;
     display: flex;
@@ -14,6 +14,11 @@
     
 }
 
+#sectOne{
+    display: flex;
+    justify-content: center;
+}
+/* select all tags by their ID */
 #firstname, #lastname, #email{
     
     border-radius: 60px;
@@ -32,6 +37,7 @@
     margin-right: 0;
 }
 
+/* submition button */
 #submition:hover{
     background: lightblue;
     border-color: transparent;
@@ -41,15 +47,12 @@
     margin: 1em;
 }
 
+/* select all a link */
 a{
     text-decoration: none;
     color: black;
 }
 
-#sectOne{
-    display: flex;
-    justify-content: center;
-}
 nav li{
     display: inline-block;
 }
@@ -58,3 +61,18 @@ nav li{
     margin-left: 12em;
 }
 
+#container{
+    background-color: whitesmoke;
+    height: 750px;
+    width: 830px;
+    border-radius: 30px;
+    margin-left: 25%;
+}
+
+canvas{
+    margin-left: 1em;
+}
+
+body{
+    background-color: gray;
+}

@@ -48,7 +48,7 @@ x: canvas.width/2,
 y: paddle.y - ballRadius,
 radius: ballRadius,
 speed: 4,
- deltaX: 3 * (Math.random() * 2 - 1),
+deltaX: 3 * (Math.random() * 2 - 1),
 deltaY: -3
 }
 function ballDraw (){
@@ -69,9 +69,11 @@ function ballDraw (){
 // create a function for the Ball Collision to the wall
 
 function ballCollision (){
-    if(theBall.x + theBall.radius > canvas.width && theBall.x - theBall.radius < 0){
-        theBall.deltaX = - theBall.deltaX
+   // Border collision
+    if(theBall.x + theBall.radius > canvas.width || theBall.x - theBall.radius < 0){
+        theBall.deltaX = -theBall.deltaX
     }
+    //Top Collision
     if(theBall.y - theBall.radius < 0){
         theBall.deltaY = -theBall.deltaY
     }
@@ -275,10 +277,10 @@ gatesOpen()
 // Create the game Loop by creating a function. Inisde that function I will put three function ( draw(), updateG (), )
 
 function loopFunc (){
-    ctx.drawImage(backImg, 0, 0)
+    ctx.drawImage(backImg, 0, 0, 900, 600)
     draws()
     updateGame()
-    backGroundMusic.play()
+    // backGroundMusic.play()
     if(!gameOVer){
     requestAnimationFrame(loopFunc)
     }
