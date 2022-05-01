@@ -283,9 +283,7 @@ function loopFunc (){
     backGroundMusic.play()
     if(!gameOVer){
     requestAnimationFrame(loopFunc)
-    } else{
-        backGroundMusic.stop()
-    }
+
 }
 loopFunc()
 
