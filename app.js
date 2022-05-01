@@ -244,7 +244,7 @@ if (isGatesOpened){
 function gameOverr (){
     if (lifeScores <= 0){
         gameOVer = true
-
+        // backGroundMusic.sto()
     }
 }
 // Create function draws, it will draw everthing. 
@@ -283,7 +283,7 @@ function loopFunc (){
     backGroundMusic.play()
     if(!gameOVer){
     requestAnimationFrame(loopFunc)
-
+    }
 }
 loopFunc()
 
